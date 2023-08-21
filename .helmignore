@@ -1,7 +1,3 @@
-# Ignore the chart folder
-chart/
-*tgz
-
 # Ignore lock files
 *.lock
 

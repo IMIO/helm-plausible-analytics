@@ -64,7 +64,19 @@ postgresql:
   ## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
   enabled: true
   # The URL to the Postgres Database Connection String see -> https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
-  url: postgres://postgres:postgres@plausible_db:5432/plausible_db
+  url: postgres://postgres:postgres@plausible-analytics-postgresql:5432/plausible_db
+  auth:
+    username: postgres
+    password: postgres
+    database: plausible_db
+  port: 5432
+  host: plausible-analytics-postgresql
+  replication:
+    enabled: false
+  metrics:
+    enabled: false
+  persistence:
+    enabled: false
 
 # ------------------------------------------------------------------------------
 # Clickhouse:
@@ -73,7 +85,14 @@ postgresql:
 clickhouse: # Clickhouse Database
   enabled: true
   # The URL Connection String to clickhouse DB see -> https://clickhouse.tech/docs/en/interfaces/http/
-  url: http://clickhouse:8123/plausible_events_db
+  url: http://clickhouse:password@plausible-analytics-clickhouse:8123/plausible_events_db
+  auth:
+    username: clickhouse
+    password: password
+  host: plausible-analytics-clickhouse
+  initdbScripts: {"CREATE DATABASE IF NOT EXISTS plausible_events_db"}
+    
+#CLICKHOUSE_DATABASE_URL=http://user:password@plausible-events-db.plausible:8123/plausible
 
 # kubernetes ressources
 

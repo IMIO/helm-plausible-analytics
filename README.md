@@ -54,7 +54,7 @@ The following table lists the configurable parameters of the plausible-analytics
 
 Initially inspired by 
 * [https://github.com/8gears/plausible-analytics-helm-chart](https://github.com/8gears/plausible-analytics-helm-chart).
-* [Plausible Analytics Rpostory](https://github.com/plausible/analytics).
+* [Plausible Analytics Repository](https://github.com/plausible/analytics).
 
 ## Contributing
 

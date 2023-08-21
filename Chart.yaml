@@ -19,12 +19,12 @@ maintainers:
     url: https://github.com/alexnuttinck
 dependencies:
   - name: postgresql
-    alias: postgres
+    alias: postgresql
     version: 12.8.2
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
   - name: clickhouse
     alias: clickhouse
-    version: 3.6.6
+    version: 3.6.8
     repository: https://charts.bitnami.com/bitnami
     condition: clickhouse.enabled
