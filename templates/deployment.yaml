@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,9 +29,12 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
-        - name: wait-for-db
+        - name: wait-for-postgres
           image: postgres:13.3-alpine
           command: ['sh', '-c', 'until pg_isready -h {{ .Values.postgresql.host }} -p {{ .Values.postgresql.port }} -U {{ .Values.postgresql.auth.username }}; do echo "Waiting for PostgreSQL to be ready..."; sleep 2; done;']
+        - name: wait-for-clickhouse
+          image: bitnami/clickhouse:23.3.9
+          command: ['sh', '-c', 'until clickhouse-client --host {{ .Values.clickhouse.host }} --port 9000 --user {{ .Values.clickhouse.auth.username }} --password {{ .Values.clickhouse.auth.password }} --query "SELECT version()"; do echo "Waiting for ClickHouse to be ready..."; sleep 2; done;']
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -41,16 +45,11 @@ spec:
             - /bin/sh
             - -x
             - -c
-            - /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin
-            #- /entrypoint.sh db createdb && /entrypoint.sh plausible_events_db clickhouse-client --host {{ .Values.clickhouse.host }} --query "CREATE DATABASE IF NOT EXISTS plausible_events_db"  && /entrypoint.sh db migrate && /entrypoint.sh db init-admin
+            - /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin && /entrypoint.sh run
           env:
             {{- if .Values.baseURL }}
             - name: BASE_URL
               value: {{ .Values.baseURL | toString | quote }}
-            {{- end }}
-            {{- if .Values.service.port }}
-            - name: PORT
-              value: {{ .Values.service.port | toString | quote }}
             {{- end }}
             {{- if .Values.listenip }}
             - name: LISTEN_IP
@@ -242,7 +241,7 @@ spec:
             {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 8000
               protocol: TCP
           livenessProbe:
             httpGet:

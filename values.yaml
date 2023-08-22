@@ -1,3 +1,4 @@
+---
 # Default values for plausible.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -7,7 +8,8 @@
 
 disableAuth: false # Disables authentication completely, no registration, login will be shown.
 disableRegistration: false # Disables registration of new users.
-baseURL: http://localhost:8000 # The hosting url of the server, used for URL generation. In production systems, this should be your ingress host.
+baseURL: http://plausible-analytics.local # The hosting url of the server, used for URL generation. In production systems, this should be your ingress host.
+listenIP: 0.0.0.0
 
 adminUser:
   email: admin@example.com  # Admin user's email
@@ -90,7 +92,7 @@ clickhouse: # Clickhouse Database
     username: clickhouse
     password: password
   host: plausible-analytics-clickhouse
-  initdbScripts: {"CREATE DATABASE IF NOT EXISTS plausible_events_db"}
+  initdbScripts: {CREATE DATABASE IF NOT EXISTS plausible_events_db}
     
 #CLICKHOUSE_DATABASE_URL=http://user:password@plausible-events-db.plausible:8123/plausible
 

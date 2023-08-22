@@ -1,3 +1,4 @@
+---
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "plausible-analytics.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
