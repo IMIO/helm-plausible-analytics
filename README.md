@@ -1,6 +1,6 @@
 # Helm Chart for Plausible Analytics
  
-![version](https://img.shields.io/github/tag/TODO.svg?label=release) ![test](https://github.com/TODO/actions/workflows/test.yaml/badge.svg) ![release](https://github.com/TODO/actions/workflows/release.yaml/badge.svg)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/IMIO/helm-plausible-analytics.svg?label=release) ![test](https://github.com/IMIO/helm-plausible-analytics/actions/workflows/test.yaml/badge.svg) ![release](https://github.com/IMIO/helm-plausible-analytics/actions/workflows/release.yaml/badge.svg)
 
 ## Introduction
 
@@ -39,7 +39,7 @@ or by cloning this repository:
 
 ```bash
 git clone https://github.com/imio/helm-plausible-anamytics.git
-cd helm-plausible-anamytics
+cd helm-plausible-analytics
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm dep up
@@ -49,6 +49,8 @@ helm install plausible-analytics . -f values.yaml --namespace plausible-analytic
 ## Configuration
 
 The following table lists the configurable parameters of the plausible-analytics chart and the default values.
+
+See the [values.yaml](values.yaml) file for more information.
 
 ## Credits
 
