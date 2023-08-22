@@ -1,0 +1,27 @@
+name: Helm Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Publish Helm chart
+        uses: stefanprodan/helm-gh-pages@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          charts_dir: .
+          charts_url: https://imio.github.io/helm-charts/
+          owner: IMIO
+          repository: helm-charts
+          branch: gh-pages
+          target_dir: .
