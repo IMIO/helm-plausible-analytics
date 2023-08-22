@@ -18,7 +18,7 @@ jobs:
       - name: Publish Helm chart
         uses: tylerauerbeck/helm-gh-pages@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACCESS_TOKEN }}
           charts_dir: .
           charts_url: https://imio.github.io/helm-charts/
           owner: IMIO
