@@ -25,3 +25,4 @@ jobs:
           repository: helm-charts
           branch: gh-pages
           target_dir: .
+          dependencies: bitnami,https://charts.bitnami.com/bitnami
