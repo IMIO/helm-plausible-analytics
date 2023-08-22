@@ -24,7 +24,7 @@ jobs:
           owner: IMIO
           repository: helm-charts
           branch: gh-pages
-          target_dir: .
+          target_dir: plausible-analytics
           dependencies: bitnami,https://charts.bitnami.com/bitnami
           commit_username: alexnuttinck
           commit_email: alexandre.nuttinck@imio.be
