@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Publish Helm chart
-        uses: stefanprodan/helm-gh-pages@master
+        uses: tylerauerbeck/helm-gh-pages@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           charts_dir: .
