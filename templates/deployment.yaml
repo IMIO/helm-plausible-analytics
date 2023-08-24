@@ -34,7 +34,13 @@ spec:
           command: ['sh', '-c', 'until pg_isready -h {{ .Values.postgresql.host }} -p {{ .Values.postgresql.port }} -U {{ .Values.postgresql.auth.username }}; do echo "Waiting for PostgreSQL to be ready..."; sleep 2; done;']
         - name: wait-for-clickhouse
           image: bitnami/clickhouse:23.3.9
-          command: ['sh', '-c', 'until clickhouse-client --host {{ .Values.clickhouse.host }} --port 9000 --user {{ .Values.clickhouse.auth.username }} --password {{ .Values.clickhouse.auth.password }} --query "SELECT version()"; do echo "Waiting for ClickHouse to be ready..."; sleep 2; done;']
+          command: ['sh', '-c', 'until clickhouse-client --host {{ .Values.clickhouse.host }} --port 9000 --user {{ .Values.clickhouse.auth.username }} --password "$CLICKHOUSE_PASSWORD" --query "SELECT version()"; do echo "Waiting for ClickHouse to be ready..."; sleep 2; done;']
+          env:  
+            - name: CLICKHOUSE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: CLICKHOUSE_PASSWORD
+                  name: {{ include "plausible-analytics.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -62,21 +68,20 @@ spec:
                   key: ADMIN_USER_EMAIL
                   name: {{ include "plausible-analytics.fullname" . }}
             {{- end }}
-            {{- if .Values.adminUser.email }}
+            {{- if .Values.adminUser.name }}
             - name: ADMIN_USER_NAME
               valueFrom:
                 secretKeyRef:
                   key: ADMIN_USER_NAME
                   name: {{ include "plausible-analytics.fullname" . }}
             {{- end }}
-            {{- if .Values.adminUser.email }}
+            {{- if .Values.adminUser.password }}
             - name: ADMIN_USER_PWD
               valueFrom:
                 secretKeyRef:
                   key: ADMIN_USER_PWD
                   name: {{ include "plausible-analytics.fullname" . }}
             {{- end }}
-            {{- if .Values.postgresql.enabled }}
             {{- if .Values.postgresql.url }}
             - name: DATABASE_URL
               valueFrom:
@@ -84,13 +89,11 @@ spec:
                   key: DATABASE_URL
                   name: {{ include "plausible-analytics.fullname" . }}
             {{- end }}
-            {{- end }}
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
                   key: SECRET_KEY_BASE
                   name: {{ include "plausible-analytics.fullname" . }}
-            {{- if .Values.clickhouse.enabled }}
             {{- if .Values.clickhouse.url }}
             - name: CLICKHOUSE_DATABASE_URL
               valueFrom:
@@ -98,11 +101,14 @@ spec:
                   key: CLICKHOUSE_DATABASE_URL
                   name: {{ include "plausible-analytics.fullname" . }}
             {{- end }}
+            {{- if .Values.clickhouse.auth.username }}
             - name: CLICKHOUSE_USER
               valueFrom:
                 secretKeyRef:
                   key: CLICKHOUSE_USER
                   name: {{ include "plausible-analytics.fullname" . }}
+            {{- end }}
+            {{- if .Values.clickhouse.auth.password }}
             - name: CLICKHOUSE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -243,6 +249,12 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            failureThreshold: 30
+            periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /

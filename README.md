@@ -29,6 +29,8 @@ The following items can be set via `--set` flag during installation or configure
 
 Feel free to modify the options in the [values.yaml file](values.yaml) before installation.
 
+You will need to set the sensitive values in the values.yaml file before installing the chart. (Passwords and URL of the databases).
+
 ### Install the chart
 
 ```bash
