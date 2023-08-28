@@ -249,12 +249,6 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
-          startupProbe:
-            httpGet:
-              path: /
-              port: http
-            failureThreshold: 30
-            periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /

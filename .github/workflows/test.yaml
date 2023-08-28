@@ -32,5 +32,6 @@ jobs:
         uses: helm/kind-action@v1.7.0
 
       - name: Run chart-testing (install)
-        run: ct install --chart-dirs . --charts . --target-branch ${{ github.event.repository.default_branch }}
-        
+      #  run: ct install --chart-dirs . --charts . --target-branch ${{ github.event.repository.default_branch }}
+      # can't use it until https://github.com/helm/chart-testing/issues/310 is resolved
+        run: helm install plausible-analytics . -f values.yaml --namespace plausible-analytics --create-namespace
