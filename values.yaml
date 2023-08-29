@@ -146,7 +146,7 @@ service:
 ingress:
   enabled: false
   className: ""
-  pathType: ImplementationSpecific
+  pathType: Prefix
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
