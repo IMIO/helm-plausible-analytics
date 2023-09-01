@@ -103,6 +103,11 @@ clickhouse:  # Clickhouse Database
   initdbScripts:
     db-init.sql: |
       CREATE DATABASE IF NOT EXISTS plausible_events_db
+  # https://github.com/plausible/analytics/discussions/1603 clickhouse cluster is not supported yet.
+  shards: 1
+  replicaCounts: 1
+  zookeeper:
+    enabled: false
 
 # kubernetes ressources
 
