@@ -95,6 +95,11 @@ clickhouse:  # Clickhouse Database
     password: password
     database: plausible_events_db
   host: plausible-analytics-clickhouse
+  # should be http://clickhouse.example.com if you use the initContainersHttp method
+  initContainersHttp:
+    enabled: false
+  initContainersClient:
+    enabled: true
   initdbScripts:
     db-init.sql: |
       CREATE DATABASE IF NOT EXISTS plausible_events_db

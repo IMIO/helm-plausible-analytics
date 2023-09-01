@@ -32,9 +32,16 @@ spec:
         - name: wait-for-postgres
           image: postgres:13.3-alpine
           command: ['sh', '-c', 'until pg_isready -h {{ .Values.postgresql.host }} -p {{ .Values.postgresql.port }} -U {{ .Values.postgresql.auth.username }}; do echo "Waiting for PostgreSQL to be ready..."; sleep 2; done;']
+        {{- if .Values.clickhouse.initContainersClient.enabled }}
         - name: wait-for-clickhouse
           image: bitnami/clickhouse:23.3.9
           command: ['sh', '-c', 'until clickhouse-client --host {{ .Values.clickhouse.host }} --port 9000 --user {{ .Values.clickhouse.auth.username }} --password "$CLICKHOUSE_PASSWORD" --query "SELECT version()"; do echo "Waiting for ClickHouse to be ready..."; sleep 2; done;']
+        {{- end }}
+        {{- if .Values.clickhouse.initContainersHttp.enabled }}
+        - name: wait-for-clickhouse
+          image: curlimages/curl:8.2.1
+          command: ['sh', '-c', 'until curl --fail --silent --output /dev/null {{ .Values.clickhouse.host }}; do echo "Waiting for ClickHouse to be ready..."; sleep 2; done;']  
+        {{- end }}
           env:  
             - name: CLICKHOUSE_PASSWORD
               valueFrom:
