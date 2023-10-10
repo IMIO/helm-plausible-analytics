@@ -40,7 +40,7 @@ helm install [RELEASE_NAME] imio/plausible-analytics
 or by cloning this repository:
 
 ```bash
-git clone https://github.com/imio/helm-plausible-anamytics.git
+git clone https://github.com/imio/helm-plausible-analytics.git
 cd helm-plausible-analytics
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
