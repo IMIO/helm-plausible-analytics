@@ -4,55 +4,76 @@
 # Declare variables to be passed into your templates.
 
 # plausible analytics configuration
-## see https://plausible.io/docs/self-hosting-configuration
+# see https://plausible.io/docs/self-hosting-configuration
 
-disableAuth: false  # Disables authentication completely, no registration, login will be shown.
-disableRegistration: false  # Disables registration of new users.
-baseURL: http://plausible-analytics.local  # The hosting url of the server, used for URL generation. In production systems, this should be your ingress host.
+## Server
+
+baseURL: http://plausible-analytics.local # The hosting url of the server
 listenIP: 0.0.0.0
+secretKeyBase: "" # is automaticly generated if left empty
+disableRegistration: false  # Restricts registration of new users.
+logFailedLoginAttempts: false # Controls whether to log warnings about failed login attempts.
 
-adminUser:
-  email: admin@example.com  # Admin user's email
-  name: Administrator  # Display name admin user
-  password: secr3t  # Admin user password
+## Databases
+## Plausible require a Postgres and Clickhouse database
 
-# SECRET_KEY_BASE is Helm randAlphaNum 90
+### The URL to the Postgres Database Connection String see -> https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
+databaseURL: "postgres://postgres:postgres@plausible-analytics-postgresql:5432/plausible_db"
 
-smtp:  # Plausible uses and SMTP server to send transactional emails e.g. account activation, password reset, weekly reports, etc.
-  enabled: false  # Enable/Disable SMTP functionality
-  mailer:
-    emailAddress:  # the email address of the email sender
-    adapter:
-  host:  # The host address of your smtp server.
-  port:  # The port of your smtp server.
-  username:  # The username/email in case SMTP auth is enabled.
-  password:  # The password in case SMTP auth is enabled.
-  ssl:
-    enabled: false  # If SSL is enabled for SMTP connection
-  retries: 2  # Number of retries to make until mailer gives up.
+### The URL Connection String to clickhouse DB see -> https://clickhouse.tech/docs/en/interfaces/http/
+clickhouseDatabaseURL: "http://clickhouse:password@plausible-analytics-clickhouse:8123/plausible_events_db"
+clickhouseFlushIntervalMS: ""
+clickhouseMaxBufferSize: ""
 
-postmark:  # Alternatively, you can use Postmark to send transactional emails. In this case, use the following parameters:
-  apiKey:
+### Check that postgres and clickhouse are accesible before starting plausible
+initContainers: true
 
-geolocation:  # MaxMind geolocation database#
-  enabled: false  # Enable/Disable the automated fetch of
-  account_id:  # Account/User ID from maxmind.com
-  license_key:  # My License Key from maxmind.com
+### Specifies if the helm chart should create a secret file or use an existingSecret
+secret:
+  create: true
+  existingSecret: ""
 
-# Google Search Integration
-# See: https://docs.plausible.io/self-hosting-configuration#google-search-integration
+## Mailer / SMTP Setup
+## Plausible send transactional emails e.g. account activation, password reset, weekly reports, etc.
+
+mailer:
+  enabled: false  # Enable/Disable functionality
+  email: "" # the email address of the email sender
+  adapter: "" # "Bamboo.SMTPAdapter", "Bamboo.MailgunAdapter", "Bamboo.MandrillAdapter", "Bamboo.SendGridAdapter"
+  smtp:
+    host: "" # The host address of your smtp server.
+    port: "" # The port of your smtp server.
+    username: "" # The username/email in case SMTP auth is enabled.
+    password: "" # The password in case SMTP auth is enabled.
+    ssl: "" # If SSL is enabled for SMTP connection
+    retries: ""  # Number of retries to make until mailer gives up.
+  mailgun:
+    apiKey: ""
+    domain: ""
+    baseURI: ""
+  postmarkApiKey:  ""
+  mandrillApiKey: ""
+  sendgridApiKey: ""
+
+## IP Geolocation
+## Plausible use a free ip <-> country database to enrich analytics optionally
+## you can provide a different database
+
+extra_geolocation:
+  enabled: false  # Enable/Disable
+  maxmind:
+    licenseKey: ""
+    edition: ""
+  geolite2CountryDB: ""
+  geonamesSourceFile: ""
+
+##  Google API Integration Integration
+## See: https://docs.plausible.io/self-hosting-configuration#google-search-integration
+
 google:
+  enabled: false  # Enable/Disable
   clientID:  # The Client ID from the Google API Console for your Plausible Analytics project
   clientSecret:  # The Client Secret from the Google API Console for your Plausible Analytics project
-# Twitter Integration
-# https://docs.plausible.io/self-hosting-configuration#twitter-integration
-twitter:
-  consumer:
-    key:  # The API key from the Twitter Developer Portal
-    secret:  # The API key secret from the Twitter Developer Portal
-  access:
-    token:  # The access token you generated in the steps above
-    secret:  # The access token secret you generated in the steps above
 
 labels: {}  # Extra Labels to apply on your k8s deployment
 
@@ -62,54 +83,45 @@ labels: {}  # Extra Labels to apply on your k8s deployment
 
 postgresql:
   ## If true, install the Postgresql chart
-  ## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
+  ## ref: https://github.com/bitnami/charts/tree/main/bitnami/postgresql
   enabled: true
-  # The URL to the Postgres Database Connection String see -> https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
-  # url postgres://postgres:postgres@plausible-analytics-postgresql:5432/plausible_db
-  url: postgres://postgres:postgres@plausible-analytics-postgresql:5432/plausible_db
   auth:
     username: postgres
-    # check auth.existingSecret from https://github.com/bitnami/charts/tree/main/bitnami/postgresql
     password: postgres
     database: plausible_db
   port: 5432
-  host: plausible-analytics-postgresql
   replication:
     enabled: false
   metrics:
     enabled: false
-  persistence:
-    enabled: false
+  primary:
+    persistence:
+      enabled: false
 
 # ------------------------------------------------------------------------------
 # Clickhouse:
 # ------------------------------------------------------------------------------
 
-clickhouse:  # Clickhouse Database
+clickhouse:
+  ## If true, install the Clickhouse chart
+  ## ref: https://github.com/bitnami/charts/tree/main/bitnami/clickhouse
   enabled: true
-  # The URL Connection String to clickhouse DB see -> https://clickhouse.tech/docs/en/interfaces/http/
-  url: http://clickhouse:password@plausible-analytics-clickhouse:8123/plausible_events_db
   auth:
     username: clickhouse
-    # password: password or check auth.existingSecret from https://github.com/bitnami/charts/tree/main/bitnami/clickhouse
     password: password
     database: plausible_events_db
-  host: plausible-analytics-clickhouse
-  # should be http://clickhouse.example.com if you use the initContainersHttp method
-  initContainersHttp:
-    enabled: false
-  initContainersClient:
-    enabled: true
   initdbScripts:
     db-init.sql: |
       CREATE DATABASE IF NOT EXISTS plausible_events_db
   # https://github.com/plausible/analytics/discussions/1603 clickhouse cluster is not supported yet.
   shards: 1
-  replicaCounts: 1
+  replicaCount: 1
   zookeeper:
     enabled: false
+  persistence:
+    enabled: false
 
-# kubernetes ressources
+## Kubernetes ressources
 
 replicaCount: 1
 
@@ -122,10 +134,6 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
-secret:
-  # Specifies if the helm chart should create a secret file
-  create: true
 
 serviceAccount:
   # Specifies whether a service account should be created

@@ -60,3 +60,15 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+
+{{/*
+Define the name of the secret to use
+*/}}
+{{- define "plausible-analytics.secretName" -}}
+{{- if .Values.secret.existingSecret -}}
+{{- .Values.secret.existingSecret -}}
+{{- else -}}
+{{- template "plausible-analytics.fullname" . -}}
+{{- end -}}
+{{- end -}}

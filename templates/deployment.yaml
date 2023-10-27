@@ -28,26 +28,37 @@ spec:
       serviceAccountName: {{ include "plausible-analytics.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.initContainers }}
+      volumes:
+        - name: scripts-volume
+          configMap:
+            name: {{ include "plausible-analytics.fullname" . }}
       initContainers:
         - name: wait-for-postgres
           image: postgres:13.3-alpine
-          command: ['sh', '-c', 'until pg_isready -h {{ .Values.postgresql.host }} -p {{ .Values.postgresql.port }} -U {{ .Values.postgresql.auth.username }}; do echo "Waiting for PostgreSQL to be ready..."; sleep 2; done;']
-        {{- if .Values.clickhouse.initContainersClient.enabled }}
-        - name: wait-for-clickhouse
-          image: bitnami/clickhouse:23.3.9
-          command: ['sh', '-c', 'until clickhouse-client --host {{ .Values.clickhouse.host }} --port 9000 --user {{ .Values.clickhouse.auth.username }} --password "$CLICKHOUSE_PASSWORD" --query "SELECT version()"; do echo "Waiting for ClickHouse to be ready..."; sleep 2; done;']
-        {{- end }}
-        {{- if .Values.clickhouse.initContainersHttp.enabled }}
-        - name: wait-for-clickhouse
-          image: curlimages/curl:8.2.1
-          command: ['sh', '-c', 'until curl --fail --silent --output /dev/null {{ .Values.clickhouse.host }}; do echo "Waiting for ClickHouse to be ready..."; sleep 2; done;']  
-        {{- end }}
-          env:  
-            - name: CLICKHOUSE_PASSWORD
+          command: ['sh', '/scripts/wait-for-postgres.sh']
+          env:
+            - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  key: CLICKHOUSE_PASSWORD
-                  name: {{ include "plausible-analytics.fullname" . }}
+                  key: DATABASE_URL
+                  name: {{ include "plausible-analytics.secretName" . }}
+          volumeMounts:
+            - name: scripts-volume
+              mountPath: /scripts
+        - name: wait-for-clickhouse
+          image: bitnami/clickhouse:23.3.9
+          command: ['sh', '/scripts/wait-for-clickhouse.sh']
+          env:
+            - name: CLICKHOUSE_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: CLICKHOUSE_DATABASE_URL
+                  name: {{ include "plausible-analytics.secretName" . }}
+          volumeMounts:
+            - name: scripts-volume
+              mountPath: /scripts
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -68,164 +79,11 @@ spec:
             - name: LISTEN_IP
               value: {{ .Values.listenip | toString | quote }}
             {{- end }}
-            {{- if .Values.adminUser.email }}
-            - name: ADMIN_USER_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  key: ADMIN_USER_EMAIL
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.adminUser.name }}
-            - name: ADMIN_USER_NAME
-              valueFrom:
-                secretKeyRef:
-                  key: ADMIN_USER_NAME
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.adminUser.password }}
-            - name: ADMIN_USER_PWD
-              valueFrom:
-                secretKeyRef:
-                  key: ADMIN_USER_PWD
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.postgresql.url }}
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  key: DATABASE_URL
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
                   key: SECRET_KEY_BASE
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- if .Values.clickhouse.url }}
-            - name: CLICKHOUSE_DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  key: CLICKHOUSE_DATABASE_URL
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.clickhouse.auth.username }}
-            - name: CLICKHOUSE_USER
-              valueFrom:
-                secretKeyRef:
-                  key: CLICKHOUSE_USER
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.clickhouse.auth.password }}
-            - name: CLICKHOUSE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: CLICKHOUSE_PASSWORD
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.smtp.enabled }}
-            {{- if .Values.smtp.mailer.emailAddress }}
-            - name: MAILER_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  key: MAILER_EMAIL
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.smtp.adapter }}
-            - name: MAILER_ADAPTER
-              valueFrom:
-                secretKeyRef:
-                  key: MAILER_ADAPTER
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.smtp.host }}
-            - name: SMTP_HOST_ADDR
-              valueFrom:
-                secretKeyRef:
-                  key: SMTP_HOST_ADDR
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.smtp.port }}
-            - name: SMTP_HOST_PORT
-              valueFrom:
-                secretKeyRef:
-                  key: SMTP_HOST_PORT
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.smtp.username }}
-            - name: SMTP_USER_NAME
-              valueFrom:
-                secretKeyRef:
-                  key: SMTP_USER_NAME
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.smtp.password }}
-            - name: SMTP_USER_PWD
-              valueFrom:
-                secretKeyRef:
-                  key: SMTP_USER_PWD
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.smtp.ssl.enabled }}
-            - name: SMTP_HOST_SSL_ENABLED
-              valueFrom:
-                secretKeyRef:
-                  key: SMTP_HOST_SSL_ENABLED
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.smtp.retires }}
-            - name: SMTP_RETRIES
-              valueFrom:
-                secretKeyRef:
-                  key: SMTP_RETRIES
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- end }}
-            {{- if .Values.google.clientID }}
-            - name: GOOGLE_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  key: GOOGLE_CLIENT_ID
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.google.clientSecret }}
-            - name: GOOGLE_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: GOOGLE_CLIENT_SECRET
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.twitter.consumer.key }}
-            - name: TWITTER_CONSUMER_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: TWITTER_CONSUMER_KEY
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.twitter.consumer.secret }}
-            - name: TWITTER_CONSUMER_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: TWITTER_CONSUMER_SECRET
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.twitter.access.token }}
-            - name: TWITTER_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  key: TWITTER_ACCESS_TOKEN
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.twitter.access.secret }}
-            - name: TWITTER_ACCESS_TOKEN_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: TWITTER_ACCESS_TOKEN_SECRET
-                  name: {{ include "plausible-analytics.fullname" . }}
-            {{- end }}
-            {{- if .Values.disableAuth }}
-            - name: DISABLE_AUTH
-              value: {{ .Values.disableAuth | toString | quote }}
-            {{- end }}
+                  name: {{ include "plausible-analytics.secretName" . }}
             {{- if .Values.disableRegistration }}
             - name: DISABLE_REGISTRATION
               value: {{ .Values.disableRegistration | toString | quote }}
@@ -234,23 +92,122 @@ spec:
             - name: LOG_FAILED_LOGIN_ATTEMPTS
               value: {{ .Values.logFailedLoginAttempts | toString | quote }}
             {{- end }}
-#            {{- if .Values.geolocation.enabled }}
-#            - name: GEOLITE2_COUNTRY_DB
-#              value: "/geoip/GeoLite2-Country.mmdb"
-#            {{ end }}
-            {{- if .Values.postmark.apiKey }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: DATABASE_URL
+                  name: {{ include "plausible-analytics.secretName" . }}
+            - name: CLICKHOUSE_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: CLICKHOUSE_DATABASE_URL
+                  name: {{ include "plausible-analytics.secretName" . }}
+            {{- if .Values.mailer.enabled }}
+            {{- if .Values.mailer.email }}
+            - name: MAILER_EMAIL
+              value: {{ .Values.mailer.email | toString | quote }}
+            {{- end }}
+            {{- if .Values.mailer.adapter }}
+            - name: MAILER_ADAPTER
+              value: {{ .Values.mailer.adatper | toString | quote }}
+            {{- end }}
+            {{- if eq .Values.mailer.adapter "Bamboo.SMTPAdapter" }}
+            {{- if .Values.mailer.smtp.host }}
+            - name: SMTP_HOST_ADDR
+              value: {{ .Values.mailer.smtp.host | toString | quote }}
+            {{- end }}
+            {{- if .Values.mailer.smtp.port }}
+            - name: SMTP_HOST_PORT
+              value: {{ .Values.mailer.smtp.port | toString | quote }}
+            {{- end }}
+            {{- if .Values.mailer.smtp.username }}
+            - name: SMTP_USER_NAME
+              value: {{ .Values.mailer.smtp.username | toString | quote }}
+            {{- end }}
+            - name: SMTP_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  key: SMTP_USER_PWD
+                  name: {{ include "plausible-analytics.secretName" . }}
+            {{- if .Values.mailer.smtp.ssl }}
+            - name: SMTP_HOST_SSL_ENABLED
+              value: {{ .Values.mailer.smtp.ssl | toString | quote }}
+            {{- end }}
+            {{- if .Values.mailer.smtp.retries }}
+            - name: SMTP_RETRIES
+              value: {{ .Values.mailer.smtp.retries | toString | quote }}
+            {{- end }}
+            {{- end }}
+            {{- if eq .Values.mailer.adapter "Bamboo.PostmarkAdapter" }}
             - name: POSTMARK_API_KEY
               valueFrom:
                 secretKeyRef:
                   key: POSTMARK_API_KEY
-                  name: {{ include "plausible-analytics.fullname" . }}
+                  name: {{ include "plausible-analytics.secretName" . }}
             {{- end }}
-            {{- if .Values.geoliteCountryDB }}
-            - name: GEOLITE2_COUNTRY_DB
+            {{- if eq .Values.mailer.adapter "Bamboo.MailgunAdapter" }}
+            - name: MAILGUN_API_KEY
               valueFrom:
                 secretKeyRef:
-                  key: GEOLITE2_COUNTRY_DB
-                  name: {{ include "plausible-analytics.fullname" . }}
+                  key: MAILGUN_API_KEY
+                  name: {{ include "plausible-analytics.secretName" . }}
+            {{- if .Values.mailer.mailgun.domain }}
+            - name: MAILGUN_DOMAIN
+              value: {{ .Values.mailer.mailgun.domain | toString | quote }}
+            {{- end }}
+            {{- if .Values.mailer.mailgun.baseURI }}
+            - name: MAILGUN_BASE_URI
+              value: {{ .Values.mailer.mailgun.baseURI | toString | quote }}
+            {{- end }}
+            {{- end }}
+            {{- if eq .Values.mailer.adapter "Bamboo.MandrillAdapter" }}
+            - name: MANDRILL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: MANDRILL_API_KEY
+                  name: {{ include "plausible-analytics.secretName" . }}
+            {{- end }}
+            {{- if eq .Values.mailer.adapter "Bamboo.SendGridAdapter" }}
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: SENDGRID_API_KEY
+                  name: {{ include "plausible-analytics.secretName" . }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.extra_geolocation.enabled }}
+            - name: MAXMIND_LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: MAXMIND_LICENSE_KEY
+                  name: {{ include "plausible-analytics.secretName" . }}
+            {{- if .Values.extra_geolocation.maxmind.edition }}
+            - name: MAXMIND_EDITION
+              value: {{ .Values.extra_geolocation.maxmind.edition | toString | quote }}
+            {{- end }}
+            {{- if .Values.extra_geolocation.geolite2CountryDB }}
+            - name: GEOLITE2_COUNTRY_DB
+              value: {{ .Values.extra_geolocation.geolite2CountryDB | toString | quote }}
+            {{- end }}
+            {{- if .Values.extra_geolocation.geolite2CountryDB }}
+            - name: GEONAMES_SOURCE_FILE
+              value: {{ .Values.extra_geolocation.geonamesSourceFile | toString | quote }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.google.enabled }}
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: GOOGLE_CLIENT_ID
+                  name: {{ include "plausible-analytics.secretName" . }}
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: GOOGLE_CLIENT_SECRET
+                  name: {{ include "plausible-analytics.secretName" . }}
+            {{- end }}
+            {{- if .Values.extraEnv }}
+            {{ toYaml .Values.extraEnv | indent 10 }}
             {{- end }}
           ports:
             - name: http
