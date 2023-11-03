@@ -37,3 +37,19 @@ data:
       sleep 2
     done
     echo "ClickHouse is ready."
+  wait-for-clickhouse-with-curl.sh: |
+    #!/bin/sh
+    url="$CLICKHOUSE_DATABASE_URL"
+
+    info=$(echo $url | awk '{ gsub(/https?:\/\//, "", $0); print }')
+    host=$(echo $info | awk -F[/:@] '{print $3}')
+
+    until curl \
+      --fail \
+      --silent \
+      --connect-timeout 5 \
+      --output /dev/null "$host"; do
+      echo "Waiting for ClickHouse to be ready..."
+      sleep 2
+    done
+    echo "ClickHouse is ready."

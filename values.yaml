@@ -26,7 +26,10 @@ clickhouseFlushIntervalMS: ""
 clickhouseMaxBufferSize: ""
 
 ### Check that postgres and clickhouse are accesible before starting plausible
-initContainers: true
+initContainers: 
+  enabled: true
+  curl: 
+    enabled: true  # use curl method to check if clickhouse is ready. (When port 9000 is not accessible)
 
 ### Specifies if the helm chart should create a secret file or use an existingSecret
 secret:
