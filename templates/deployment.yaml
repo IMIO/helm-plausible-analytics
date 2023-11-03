@@ -122,7 +122,7 @@ spec:
             {{- end }}
             {{- if .Values.mailer.adapter }}
             - name: MAILER_ADAPTER
-              value: {{ .Values.mailer.adatper | toString | quote }}
+              value: {{ .Values.mailer.adapter | toString | quote }}
             {{- end }}
             {{- if eq .Values.mailer.adapter "Bamboo.SMTPAdapter" }}
             {{- if .Values.mailer.smtp.host }}
