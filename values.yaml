@@ -8,11 +8,11 @@
 
 ## Server
 
-baseURL: http://plausible-analytics.local # The hosting url of the server
+baseURL: http://plausible-analytics.local  # The hosting url of the server
 listenIP: 0.0.0.0
-secretKeyBase: "" # is automaticly generated if left empty
+secretKeyBase: ""  # is automaticly generated if left empty
 disableRegistration: false  # Restricts registration of new users.
-logFailedLoginAttempts: false # Controls whether to log warnings about failed login attempts.
+logFailedLoginAttempts: false  # Controls whether to log warnings about failed login attempts.
 
 ## Databases
 ## Plausible require a Postgres and Clickhouse database
@@ -38,20 +38,20 @@ secret:
 
 mailer:
   enabled: false  # Enable/Disable functionality
-  email: "" # the email address of the email sender
-  adapter: "" # "Bamboo.SMTPAdapter", "Bamboo.MailgunAdapter", "Bamboo.MandrillAdapter", "Bamboo.SendGridAdapter"
+  email: ""  # the email address of the email sender
+  adapter: ""  # "Bamboo.SMTPAdapter", "Bamboo.MailgunAdapter", "Bamboo.MandrillAdapter", "Bamboo.SendGridAdapter"
   smtp:
-    host: "" # The host address of your smtp server.
-    port: "" # The port of your smtp server.
-    username: "" # The username/email in case SMTP auth is enabled.
-    password: "" # The password in case SMTP auth is enabled.
-    ssl: "" # If SSL is enabled for SMTP connection
+    host: ""  # The host address of your smtp server.
+    port: ""  # The port of your smtp server.
+    username: ""  # The username/email in case SMTP auth is enabled.
+    password: ""  # The password in case SMTP auth is enabled.
+    ssl: ""  # If SSL is enabled for SMTP connection
     retries: ""  # Number of retries to make until mailer gives up.
   mailgun:
     apiKey: ""
     domain: ""
     baseURI: ""
-  postmarkApiKey:  ""
+  postmarkApiKey: ""
   mandrillApiKey: ""
   sendgridApiKey: ""
 
