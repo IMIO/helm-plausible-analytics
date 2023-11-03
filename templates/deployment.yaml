@@ -133,6 +133,7 @@ spec:
             - name: SMTP_HOST_PORT
               value: {{ .Values.mailer.smtp.port | toString | quote }}
             {{- end }}
+            {{- if .Values.mailer.smtp.auth }}
             {{- if .Values.mailer.smtp.username }}
             - name: SMTP_USER_NAME
               value: {{ .Values.mailer.smtp.username | toString | quote }}
@@ -142,6 +143,7 @@ spec:
                 secretKeyRef:
                   key: SMTP_USER_PWD
                   name: {{ include "plausible-analytics.secretName" . }}
+            {{- end }}
             {{- if .Values.mailer.smtp.ssl }}
             - name: SMTP_HOST_SSL_ENABLED
               value: {{ .Values.mailer.smtp.ssl | toString | quote }}

@@ -46,9 +46,10 @@ mailer:
   smtp:
     host: ""  # The host address of your smtp server.
     port: ""  # The port of your smtp server.
+    auth: false  # If SMTP auth is enabled.
     username: ""  # The username/email in case SMTP auth is enabled.
     password: ""  # The password in case SMTP auth is enabled.
-    ssl: ""  # If SSL is enabled for SMTP connection
+    ssl: false  # If SSL is enabled for SMTP connection
     retries: ""  # Number of retries to make until mailer gives up.
   mailgun:
     apiKey: ""
