@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "plausible-analytics.fullname" . }}
+  labels:
+    {{- include "plausible-analytics.labels" . | nindent 4 }}
+data:
+  wait-for-postgres.sh: |
+    #!/bin/sh
+    url="$DATABASE_URL"
+
+    info=$(echo $url | awk '{ gsub(/postgres:\/\//, "", $0); print }')
+    host=$(echo $info | awk -F[@:/] '{print $3}')
+    port=$(echo $info | awk -F[@:/] '{print $4}')
+    user=$(echo $info | awk -F[@:/] '{print $1}')
+    db=$(echo $info | awk -F[@:/] '{print $5}')
+
+    until pg_isready -h "$host" -p "$port" -U "$user" -d "$db"; do
+      echo "Waiting for PostgreSQL to be ready..."
+      sleep 2
+    done
+    echo "PostgreSQL is ready."
+  wait-for-clickhouse.sh: |
+    #!/bin/sh
+    url="$CLICKHOUSE_DATABASE_URL"
+
+    info=$(echo $url | awk '{ gsub(/https?:\/\//, "", $0); print }')
+    host=$(echo $info | awk -F[/:@] '{print $3}')
+    user=$(echo $info | awk -F[/:@] '{print $1}')
+    password=$(echo $info | awk -F[/:@] '{print $2}')
+
+    until clickhouse-client \
+      --host "$host" --port 9000 \
+      --user "$user" --password "$password" \
+      --query "SELECT version()"; do
+      echo "Waiting for ClickHouse to be ready..."
+      sleep 2
+    done
+    echo "ClickHouse is ready."
