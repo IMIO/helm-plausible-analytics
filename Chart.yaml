@@ -15,8 +15,8 @@ sources:
   - https://github.com/imio/helm-plausible-analytics
 icon: https://plausible.io/assets/images/icon/plausible_logo.compressed.png
 maintainers:
-  - name: alexnuttinck
-    url: https://github.com/alexnuttinck
+  - name: IMIO
+    url: https://github.com/IMIO/
 dependencies:
   - name: postgresql
     alias: postgresql

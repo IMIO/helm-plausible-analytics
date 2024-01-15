@@ -1,15 +1,22 @@
 name: Helm Release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+  workflow_run:
+    workflows:
+      - Lint and Test Charts
+    types:
+      - completed
 
 jobs:
   release:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -34,5 +41,3 @@ jobs:
           branch: gh-pages
           target_dir: plausible-analytics
           dependencies: bitnami,https://charts.bitnami.com/bitnami
-          commit_username: alexnuttinck
-          commit_email: alexandre.nuttinck@imio.be
