@@ -28,14 +28,14 @@ spec:
       serviceAccountName: {{ include "plausible-analytics.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      {{- if .Values.initContainers.enabled }}
+      {{- if .Values.plausibleInitContainers.enabled }}
       volumes:
         - name: scripts-volume
           configMap:
             name: {{ include "plausible-analytics.fullname" . }}
       initContainers:
         - name: wait-for-postgres
-          image: postgres:13.3-alpine
+          image: "{{ .Values.plausibleInitContainers.postgresql.image.repository }}:{{ .Values.plausibleInitContainers.postgresql.image.tag | default "latest" }}"
           command: ['sh', '/scripts/wait-for-postgres.sh']
           env:
             - name: DATABASE_URL
@@ -46,9 +46,9 @@ spec:
           volumeMounts:
             - name: scripts-volume
               mountPath: /scripts
-        {{- if not .Values.initContainers.curl.enabled }}
+        {{- if not .Values.plausibleInitContainers.curl.enabled }}
         - name: wait-for-clickhouse
-          image: bitnami/clickhouse:23.3.9
+          image: "{{ .Values.plausibleInitContainers.clickhouse.image.repository }}:{{ .Values.plausibleInitContainers.clickhouse.image.tag | default "latest" }}"
           command: ['sh', '/scripts/wait-for-clickhouse.sh']
           env:
             - name: CLICKHOUSE_DATABASE_URL
@@ -57,9 +57,9 @@ spec:
                   key: CLICKHOUSE_DATABASE_URL
                   name: {{ include "plausible-analytics.secretName" . }}
         {{- end }}
-        {{- if .Values.initContainers.curl.enabled }}
+        {{- if .Values.plausibleInitContainers.curl.enabled }}
         - name: wait-for-clickhouse
-          image: curlimages/curl:8.2.1
+          image: "{{ .Values.plausibleInitContainers.curl.image.repository }}:{{ .Values.plausibleInitContainers.curl.image.tag | default "latest" }}"
           command: ['sh', '/scripts/wait-for-clickhouse-with-curl.sh']
           env:
             - name: CLICKHOUSE_DATABASE_URL

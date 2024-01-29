@@ -26,10 +26,21 @@ clickhouseFlushIntervalMS: ""
 clickhouseMaxBufferSize: ""
 
 ### Check that postgres and clickhouse are accesible before starting plausible
-initContainers:
+plausibleInitContainers:
   enabled: true
   curl:
     enabled: false  # use curl method to check if clickhouse is ready. (When port 9000 is not accessible)
+    image:
+      repository: curlimages/curl
+      tag: "8.2.1"
+  postgresql:
+    image:
+      repository: postgres
+      tag: "13.3-alpine"
+  clickhouse:
+    image:
+      repository: bitnami/clickhouse
+      tag: "23.3.9"
 
 ### Specifies if the helm chart should create a secret file or use an existingSecret
 secret:
@@ -117,6 +128,7 @@ clickhouse:
   initdbScripts:
     db-init.sql: |
       CREATE DATABASE IF NOT EXISTS plausible_events_db
+  initContainers: []
   # https://github.com/plausible/analytics/discussions/1603 clickhouse cluster is not supported yet.
   shards: 1
   replicaCount: 1
