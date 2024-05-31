@@ -97,6 +97,11 @@ spec:
                 secretKeyRef:
                   key: SECRET_KEY_BASE
                   name: {{ include "plausible-analytics.secretName" . }}
+            - name: TOTP_VAULT_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: TOTP_VAULT_KEY
+                  name: {{ include "plausible-analytics.secretName" . }}
             {{- if .Values.disableRegistration }}
             - name: DISABLE_REGISTRATION
               value: {{ .Values.disableRegistration | toString | quote }}

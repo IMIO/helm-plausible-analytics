@@ -11,6 +11,7 @@
 baseURL: http://plausible-analytics.local  # The hosting url of the server
 listenIP: 0.0.0.0
 secretKeyBase: ""  # is automaticly generated if left empty
+totpVaultKey: ""  # is automaticly generated if left empty
 disableRegistration: false  # Restricts registration of new users.
 logFailedLoginAttempts: false  # Controls whether to log warnings about failed login attempts.
 
