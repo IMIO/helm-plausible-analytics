@@ -142,10 +142,10 @@ clickhouse:
 replicaCount: 1
 
 image:
-  repository: plausible/analytics
+  repository: plausible/community-edition
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v2.0.0"
+  tag: "v2.1.0"
 
 imagePullSecrets: []
 nameOverride: ""
