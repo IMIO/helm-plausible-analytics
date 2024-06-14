@@ -82,7 +82,7 @@ spec:
             - /bin/sh
             - -x
             - -c
-            - /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin && /entrypoint.sh run
+            - /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run
           env:
             {{- if .Values.baseURL }}
             - name: BASE_URL
