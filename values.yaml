@@ -11,6 +11,7 @@
 baseURL: http://plausible-analytics.local  # The hosting url of the server
 listenIP: 0.0.0.0
 secretKeyBase: ""  # is automaticly generated if left empty
+totpVaultKey: ""  # is automaticly generated if left empty
 disableRegistration: false  # Restricts registration of new users.
 logFailedLoginAttempts: false  # Controls whether to log warnings about failed login attempts.
 
@@ -142,10 +143,10 @@ clickhouse:
 replicaCount: 1
 
 image:
-  repository: plausible/analytics
+  repository: plausible/community-edition
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v2.0.0"
+  tag: "v2.1.1"
 
 imagePullSecrets: []
 nameOverride: ""
