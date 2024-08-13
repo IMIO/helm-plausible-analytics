@@ -1,0 +1,15 @@
+---
+    name: Lint and Test Charts on PR
+    
+    on: [pull_request]
+    
+    jobs:
+      lint-test:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Lint and Test Charts
+            uses: IMIO/gha/helm-test-notify@v3.9.2
+            with:
+              HELM_RELEASE: plausible-analytics
+              HELM_NAMESPACE: plausible-analytics
+    

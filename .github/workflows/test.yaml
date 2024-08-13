@@ -1,37 +1,16 @@
 ---
 name: Lint and Test Charts
 
-on: [pull_request, push, workflow_dispatch]
+on: [push, workflow_dispatch]
 
 jobs:
   lint-test:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: self-hosted
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Lint and Test Charts
+        uses: IMIO/gha/helm-test-notify@v3.9.2
         with:
-          fetch-depth: 0
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.12.3
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          check-latest: true
-
-      - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.6.0
-
-      - name: Run chart-testing (lint)
-        run: ct lint --chart-dirs . --charts . --target-branch ${{ github.event.repository.default_branch }}
-
-      - name: Create kind cluster
-        uses: helm/kind-action@v1.7.0
-
-      - name: Run chart-testing (install)
-      #  run: ct install --chart-dirs . --charts . --target-branch ${{ github.event.repository.default_branch }}
-      # can't use it until https://github.com/helm/chart-testing/issues/310 is resolved
-        run: helm install plausible-analytics . -f values.yaml --namespace plausible-analytics --create-namespace
+          HELM_RELEASE: plausible-analytics
+          HELM_NAMESPACE: plausible-analytics
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}

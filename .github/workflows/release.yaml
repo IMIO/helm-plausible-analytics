@@ -14,29 +14,15 @@ jobs:
   release:
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+    runs-on:
+      group: self-hosted
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Helm Release
+        uses: IMIO/gha/helm-release-notify@v3.9.2
         with:
-          fetch-depth: 0
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: "helm-charts"
-      - name: Publish Helm chart
-        uses: tylerauerbeck/helm-gh-pages@main
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          charts_dir: .
-          index_dir: .
-          charts_url: https://imio.github.io/helm-charts/
-          owner: IMIO
-          repository: helm-charts
-          branch: gh-pages
-          target_dir: plausible-analytics
-          dependencies: bitnami,https://charts.bitnami.com/bitnami
+          TARGET_DIR: plausible-analytics
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
+          APP_ID: ${{ secrets.APP_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          HELM_DEPENDENCIES: bitnami,https://charts.bitnami.com/bitnami
