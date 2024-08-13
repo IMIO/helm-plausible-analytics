@@ -19,7 +19,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Helm Release
-        uses: IMIO/gha/helm-release-notify@v3.9.2
+        uses: IMIO/gha/helm-release-notify@v3.9.3
         with:
           TARGET_DIR: plausible-analytics
           MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}

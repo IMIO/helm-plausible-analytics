@@ -9,7 +9,7 @@ jobs:
       group: self-hosted
     steps:
       - name: Lint and Test Charts
-        uses: IMIO/gha/helm-test-notify@v3.9.2
+        uses: IMIO/gha/helm-test-notify@v3.9.3
         with:
           HELM_RELEASE: plausible-analytics
           HELM_NAMESPACE: plausible-analytics
