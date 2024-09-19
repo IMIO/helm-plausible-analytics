@@ -14,8 +14,7 @@ jobs:
   release:
     permissions:
       contents: write
-    runs-on:
-      group: self-hosted
+    runs-on: gha-runners
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Helm Release

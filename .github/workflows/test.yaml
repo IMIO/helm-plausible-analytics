@@ -5,8 +5,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   lint-test:
-    runs-on:
-      group: self-hosted
+    runs-on: gha-runners
     steps:
       - name: Lint and Test Charts
         uses: IMIO/gha/helm-test-notify@v3.9.3
