@@ -54,7 +54,7 @@ secret:
 mailer:
   enabled: false  # Enable/Disable functionality
   email: ""  # the email address of the email sender
-  adapter: ""  # "Bamboo.SMTPAdapter", "Bamboo.MailgunAdapter", "Bamboo.MandrillAdapter", "Bamboo.SendGridAdapter"
+  adapter: ""  # "Bamboo.Mua", "Bamboo.MailgunAdapter", "Bamboo.MandrillAdapter", "Bamboo.SendGridAdapter"
   smtp:
     host: ""  # The host address of your smtp server.
     port: ""  # The port of your smtp server.
