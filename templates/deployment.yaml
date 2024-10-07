@@ -129,7 +129,7 @@ spec:
             - name: MAILER_ADAPTER
               value: {{ .Values.mailer.adapter | toString | quote }}
             {{- end }}
-            {{- if eq .Values.mailer.adapter "Bamboo.SMTPAdapter" }}
+            {{- if eq .Values.mailer.adapter "Bamboo.Mua" }}
             {{- if .Values.mailer.smtp.host }}
             - name: SMTP_HOST_ADDR
               value: {{ .Values.mailer.smtp.host | toString | quote }}
