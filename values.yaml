@@ -20,6 +20,8 @@ logFailedLoginAttempts: false  # Controls whether to log warnings about failed l
 
 ### The URL to the Postgres Database Connection String see -> https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
 databaseURL: "postgres://postgres:postgres@plausible-analytics-postgresql:5432/plausible_db"
+### CA certificate for the database connection in PEM format. If not provided, the database connection will not use SSL.
+databaseCA: null
 
 ### The URL Connection String to clickhouse DB see -> https://clickhouse.tech/docs/en/interfaces/http/
 clickhouseDatabaseURL: "http://clickhouse:password@plausible-analytics-clickhouse:8123/plausible_events_db"
