@@ -28,11 +28,21 @@ spec:
       serviceAccountName: {{ include "plausible-analytics.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      {{- if .Values.plausibleInitContainers.enabled }}
       volumes:
+        {{- if .Values.plausibleInitContainers.enabled }}
         - name: scripts-volume
           configMap:
             name: {{ include "plausible-analytics.fullname" . }}
+        {{- end }}
+        {{- if .Values.databaseCA }}
+        - name: database-ca
+          secret:
+            secretName: {{ include "plausible-analytics.secretName" . }}
+            items:
+              - key: DATABASE_CA
+                path: database-ca.pem
+        {{- end }}
+      {{- if .Values.plausibleInitContainers.enabled }}
       initContainers:
         - name: wait-for-postgres
           image: "{{ .Values.plausibleInitContainers.postgresql.image.repository }}:{{ .Values.plausibleInitContainers.postgresql.image.tag | default "latest" }}"
@@ -71,6 +81,11 @@ spec:
           volumeMounts:
             - name: scripts-volume
               mountPath: /scripts
+            {{- if .Values.databaseCA }}
+            - name: database-ca
+              mountPath: /etc/ssl/certs/plausible/
+              readOnly: true
+            {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -83,6 +98,12 @@ spec:
             - -x
             - -c
             - /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run
+          volumeMounts:
+            {{- if .Values.databaseCA }}
+            - name: database-ca
+              mountPath: /etc/ssl/certs/plausible/
+              readOnly: true
+            {{- end }}
           env:
             {{- if .Values.baseURL }}
             - name: BASE_URL
@@ -115,6 +136,10 @@ spec:
                 secretKeyRef:
                   key: DATABASE_URL
                   name: {{ include "plausible-analytics.secretName" . }}
+            {{- if .Values.databaseCA }}
+            - name: DATABASE_CACERTFILE
+              value: /etc/ssl/certs/plausible/database-ca.pem
+            {{- end }}
             - name: CLICKHOUSE_DATABASE_URL
               valueFrom:
                 secretKeyRef:
