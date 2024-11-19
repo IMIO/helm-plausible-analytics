@@ -3,7 +3,7 @@ chart/
 *tgz
 
 # Ignore lock files
-*.lock
+Chart.lock
 
 # Ignore IDE specific files
 .vscode/
@@ -12,4 +12,3 @@ chart/
 .direnv/*
 *.tgz
 .pre-commit-config.yaml
-Chart.lock
