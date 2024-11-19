@@ -8,7 +8,7 @@ jobs:
     runs-on: gha-runners
     steps:
       - name: Lint and Test Charts
-        uses: IMIO/gha/helm-test-notify@v3.9.3
+        uses: IMIO/gha/helm-test-notify@v4
         with:
           HELM_RELEASE: plausible-analytics
           HELM_NAMESPACE: plausible-analytics

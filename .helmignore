@@ -22,3 +22,8 @@
 
 # CI 
 .github/
+
+helmlint.sh 
+.envrc
+.direnv/
+flake.*

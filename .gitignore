@@ -8,3 +8,8 @@ chart/
 # Ignore IDE specific files
 .vscode/
 .idea/
+
+.direnv/*
+*.tgz
+.pre-commit-config.yaml
+Chart.lock
