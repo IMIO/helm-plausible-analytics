@@ -13,7 +13,7 @@ sources:
   - https://github.com/plausible/analytics
   - https://github.com/imio/helm-charts
   - https://github.com/imio/helm-plausible-analytics
-icon: https://plausible.io/assets/images/icon/plausible_logo.compressed.png
+icon: https://plausible.io/uploads/plausible-community-edition.png
 maintainers:
   - name: IMIO
     url: https://github.com/IMIO/
