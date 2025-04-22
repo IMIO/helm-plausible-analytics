@@ -35,15 +35,15 @@ plausibleInitContainers:
     enabled: false  # use curl method to check if clickhouse is ready. (When port 9000 is not accessible)
     image:
       repository: curlimages/curl
-      tag: "8.2.1"
+      tag: "8.13.0"
   postgresql:
     image:
       repository: postgres
-      tag: "13.3-alpine"
+      tag: "17.4-alpine"
   clickhouse:
     image:
       repository: bitnami/clickhouse
-      tag: "23.3.9"
+      tag: "24.12.4"
 
 ### Specifies if the helm chart should create a secret file or use an existingSecret
 secret:
@@ -148,7 +148,7 @@ image:
   repository: ghcr.io/plausible/community-edition
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v2.1.4"
+  tag: "v3.0.1"
 
 imagePullSecrets: []
 nameOverride: ""

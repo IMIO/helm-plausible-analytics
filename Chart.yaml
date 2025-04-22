@@ -3,8 +3,8 @@ apiVersion: v2
 name: plausible-analytics
 description: A Helm Chart for Plausible Analytics - Simple, open-source, lightweight (< 1 KB) and privacy-friendly web analytics alternative to Google Analytics.
 type: application
-version: 0.3.3
-appVersion: 2.1.1
+version: 0.4.0
+appVersion: 3.0.1
 keywords:
   - web analytics
   - analytics
@@ -20,11 +20,11 @@ maintainers:
 dependencies:
   - name: postgresql
     alias: postgresql
-    version: 12.8.2
-    repository: https://charts.bitnami.com/bitnami
+    version: 16.x.x
+    repository: oci://registry-1.docker.io/bitnamicharts
     condition: postgresql.enabled
   - name: clickhouse
     alias: clickhouse
-    version: 3.6.7
-    repository: https://charts.bitnami.com/bitnami
+    version: 7.x.x
+    repository: oci://registry-1.docker.io/bitnamicharts
     condition: clickhouse.enabled
