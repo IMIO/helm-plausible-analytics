@@ -1,6 +1,6 @@
 # Helm Chart for Plausible Analytics
  
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/IMIO/helm-plausible-analytics.svg?label=release) ![test](https://github.com/IMIO/helm-plausible-analytics/actions/workflows/test.yaml/badge.svg) ![release](https://github.com/IMIO/helm-plausible-analytics/actions/workflows/release.yaml/badge.svg)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![version](https://img.shields.io/github/tag/IMIO/helm-plausible-analytics.svg?label=release) ![test](https://github.com/IMIO/helm-plausible-analytics/actions/workflows/test.yaml/badge.svg) ![release](https://github.com/IMIO/helm-plausible-analytics/actions/workflows/release.yaml/badge.svg) [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/imio)](https://artifacthub.io/packages/search?repo=imio)
 
 ## Introduction
 
@@ -42,7 +42,7 @@ or by cloning this repository:
 ```bash
 git clone https://github.com/imio/helm-plausible-analytics.git
 cd helm-plausible-analytics
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add bitnami oci://registry-1.docker.io/bitnamicharts
 helm repo update
 helm dep up
 helm install plausible-analytics . -f values.yaml --namespace plausible-analytics --create-namespace

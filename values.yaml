@@ -148,7 +148,7 @@ image:
   repository: ghcr.io/plausible/community-edition
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v2.1.4"
+  tag: "v3.0.1"
 
 imagePullSecrets: []
 nameOverride: ""
