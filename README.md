@@ -42,7 +42,7 @@ or by cloning this repository:
 ```bash
 git clone https://github.com/imio/helm-plausible-analytics.git
 cd helm-plausible-analytics
-helm repo add bitnami oci://registry-1.docker.io/bitnamicharts
+helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm dep up
 helm install plausible-analytics . -f values.yaml --namespace plausible-analytics --create-namespace
