@@ -233,3 +233,18 @@ affinity: {}
 
 ## Extra environment variables definition
 extraEnv: []
+
+## Extra volumes definition
+## Refer to ".spec.volumes" specification : https://kubernetes.io/docs/concepts/storage/volumes/
+extraVolumes: []
+# - name: my_volume
+#   secret:
+#     secretName: my_secret
+#     optional: false
+
+## Extra volumes mounts' definition
+## Refer to ".spec.containers.volumeMounts" specification : https://kubernetes.io/docs/concepts/storage/volumes/
+extraVolumeMounts: []
+# - name: mounted_secret
+#   mountPath: "/etc/mounted_secret"
+#   readOnly: true
