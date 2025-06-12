@@ -42,6 +42,9 @@ spec:
               - key: DATABASE_CA
                 path: database-ca.pem
         {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- if .Values.plausibleInitContainers.enabled }}
       initContainers:
         - name: wait-for-postgres
@@ -103,6 +106,9 @@ spec:
             - name: database-ca
               mountPath: /etc/ssl/certs/plausible/
               readOnly: true
+            {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           env:
             {{- if .Values.baseURL }}
