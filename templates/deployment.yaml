@@ -42,6 +42,9 @@ spec:
               - key: DATABASE_CA
                 path: database-ca.pem
         {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- if .Values.plausibleInitContainers.enabled }}
       initContainers:
         - name: wait-for-postgres
@@ -56,6 +59,11 @@ spec:
           volumeMounts:
             - name: scripts-volume
               mountPath: /scripts
+            {{- if .Values.databaseCA }}
+            - name: database-ca
+              mountPath: /etc/ssl/certs/plausible/
+              readOnly: true
+            {{- end }}
         {{- if not .Values.plausibleInitContainers.curl.enabled }}
         - name: wait-for-clickhouse
           image: "{{ .Values.plausibleInitContainers.clickhouse.image.repository }}:{{ .Values.plausibleInitContainers.clickhouse.image.tag | default "latest" }}"
@@ -81,11 +89,6 @@ spec:
           volumeMounts:
             - name: scripts-volume
               mountPath: /scripts
-            {{- if .Values.databaseCA }}
-            - name: database-ca
-              mountPath: /etc/ssl/certs/plausible/
-              readOnly: true
-            {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -103,6 +106,9 @@ spec:
             - name: database-ca
               mountPath: /etc/ssl/certs/plausible/
               readOnly: true
+            {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           env:
             {{- if .Values.baseURL }}
