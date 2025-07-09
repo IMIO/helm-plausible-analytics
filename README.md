@@ -8,6 +8,9 @@ This [Helm](https://helm.sh/) chart installs `Plausible Analytics` in a [Kuberne
 
 ## Prerequisites
 
+> [!NOTE]
+> For production environments, it is recommended to use [CloudNativePG](https://github.com/cloudnative-pg/cloudnative-pg) for PostgreSQL and the [ClickHouse Operator](https://github.com/Altinity/clickhouse-operator) for ClickHouse instead of the dependent Helm charts included here. The bundled charts are primarily intended for testing and development purposes.
+
 - Kubernetes cluster 1.12+
 - Helm 3.0.0+
 - PV provisioner support in the underlying infrastructure (Optional)
