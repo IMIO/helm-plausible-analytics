@@ -35,14 +35,14 @@ plausibleInitContainers:
     enabled: false  # use curl method to check if clickhouse is ready. (When port 9000 is not accessible)
     image:
       repository: curlimages/curl
-      tag: "8.13.0"
+      tag: "8.15.0"
   postgresql:
     image:
       repository: postgres
-      tag: "17.4-alpine"
+      tag: "17.6-alpine"
   clickhouse:
     image:
-      repository: bitnami/clickhouse
+      repository: bitnamilegacy/clickhouse
       tag: "24.12.4"
 
 ### Specifies if the helm chart should create a secret file or use an existingSecret
@@ -103,6 +103,8 @@ postgresql:
   ## If true, install the Postgresql chart
   ## ref: https://github.com/bitnami/charts/tree/main/bitnami/postgresql
   enabled: true
+  image:
+    repository: bitnamilegacy/postgresql
   auth:
     username: postgres
     password: postgres
@@ -112,9 +114,15 @@ postgresql:
     enabled: false
   metrics:
     enabled: false
+    image:
+      repository: bitnamilegacy/postgres-exporter
   primary:
     persistence:
       enabled: false
+  volumePermissions:
+    enabled: false
+    image:
+      repository: bitnamilegacy/os-shell
 
 # ------------------------------------------------------------------------------
 # Clickhouse:
@@ -124,6 +132,8 @@ clickhouse:
   ## If true, install the Clickhouse chart
   ## ref: https://github.com/bitnami/charts/tree/main/bitnami/clickhouse
   enabled: true
+  image:
+    repository: bitnamilegacy/clickhouse
   auth:
     username: clickhouse
     password: password
@@ -139,6 +149,10 @@ clickhouse:
     enabled: false
   persistence:
     enabled: false
+  volumePermissions:
+    enabled: false
+    image:
+      repository: bitnamilegacy/os-shell
 
 ## Kubernetes ressources
 
