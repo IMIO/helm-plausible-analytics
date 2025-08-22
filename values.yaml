@@ -103,8 +103,8 @@ postgresql:
   ## If true, install the Postgresql chart
   ## ref: https://github.com/bitnami/charts/tree/main/bitnami/postgresql
   enabled: true
-  global:  
-    security: 
+  global:
+    security:
       allowInsecureImages: true
   image:
     repository: bitnamilegacy/postgresql
@@ -135,8 +135,8 @@ clickhouse:
   ## If true, install the Clickhouse chart
   ## ref: https://github.com/bitnami/charts/tree/main/bitnami/clickhouse
   enabled: true
-  global:  
-    security: 
+  global:
+    security:
       allowInsecureImages: true
   image:
     repository: bitnamilegacy/clickhouse
